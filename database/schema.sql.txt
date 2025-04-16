@@ -1,0 +1,53 @@
+CREATE DATABASE library_db
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_general_ci;
+
+-- table books
+CREATE TABLE Books (
+    book_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    publication_year YEAR,
+    genre VARCHAR(50),
+    is_available BOOLEAN DEFAULT TRUE,
+    INDEX idx_publication_year (publication_year)
+);
+-- table Membres
+CREATE TABLE Members (
+    member_id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    registration_date DATE DEFAULT (CURRENT_DATE),
+    INDEX idx_last_name (last_name)
+);
+-- table Loans
+CREATE TABLE Loans (
+    loan_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT NOT NULL,
+    member_id INT NOT NULL,
+    loan_date DATE NOT NULL,
+    return_date DATE,
+    expected_return_date DATE GENERATED ALWAYS AS (DATE_ADD(loan_date, INTERVAL 30 DAY)),
+    FOREIGN KEY (book_id) REFERENCES Books(book_id) ON DELETE CASCADE,
+    FOREIGN KEY (member_id) REFERENCES Members(member_id) ON DELETE CASCADE,
+    CHECK (return_date IS NULL OR return_date >= loan_date)
+);
+-- Table Genres 
+CREATE TABLE Genres (
+    genre_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL
+);
+-- Trigger pour mettre à jour la disponibilité
+DELIMITER $$
+CREATE TRIGGER after_loan_return
+AFTER UPDATE ON Loans
+FOR EACH ROW
+BEGIN
+    IF NEW.return_date IS NOT NULL THEN
+        UPDATE Books
+        SET is_available = TRUE
+        WHERE book_id = NEW.book_id;
+    END IF;
+END$$
+DELIMITER ;

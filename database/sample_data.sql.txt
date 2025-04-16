@@ -1,0 +1,15 @@
+-- Peupler la table Books
+INSERT INTO Books (title, author, publication_year, genre) VALUES
+('Le Seigneur des Anneaux', 'J.R.R. Tolkien', 1954, 'Fantasy'),
+('Dune', 'Frank Herbert', 1965, 'Science-Fiction'),
+('1984', 'George Orwell', 1949, 'Dystopie');
+
+-- Peupler la table Members
+INSERT INTO Members (first_name, last_name, email) VALUES
+('Jean', 'Dupont', 'jean.dupont@email.com'),
+('Marie', 'Curie', 'marie.curie@email.com');
+
+-- Peupler la table Loans
+INSERT INTO Loans (book_id, member_id, loan_date) VALUES
+(1, 1, '2024-01-10'),
+(2, 2, '2024-03-15');

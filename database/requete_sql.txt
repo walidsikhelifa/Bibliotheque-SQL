@@ -1,0 +1,26 @@
+-- Livres disponibles
+select title , author 
+from books
+where is_available = True
+
+-- Emprunts en cours avec détails
+SELECT 
+    m.first_name,
+    m.last_name,
+    b.title,
+    l.loan_date,
+    l.expected_return_date
+FROM Loans l
+JOIN Books b ON l.book_id = b.book_id
+JOIN Members m ON l.member_id = m.member_id
+WHERE l.return_date IS NULL;
+
+-- Top 3 des auteurs les plus empruntés
+SELECT 
+    author, 
+    COUNT(*) AS total_emprunts
+FROM Books
+JOIN Loans USING(book_id)
+GROUP BY author
+ORDER BY total_emprunts DESC
+LIMIT 3;
